@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PersonaKeys - Transform your Logitech hardware into a physical AI command surface with specialized coding assistants. On-device inference, private, no cloud required.">
+    <title>PersonaKeys - Hardware-Native AI for Developers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 60px 0 40px;
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        main {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            margin-top: 40px;
+            padding: 60px 0;
+        }
+
+        section {
+            padding: 40px 0;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #667eea;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .personas {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .persona-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .persona-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .persona-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .persona-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .ring-control {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .ring-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        th {
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .quick-start {
+            background: #f8f9fa;
+            padding: 60px 0;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        footer {
+            background: #2d2d2d;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.2rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>PersonaKeys</h1>
+            <p class="tagline">Transform your Logitech hardware into a physical AI command surface</p>
+            <div class="badges">
+                <span class="badge">🔒 On-Device AI</span>
+                <span class="badge">⚡ Low Latency</span>
+                <span class="badge">🔧 .NET 8</span>
+                <span class="badge">🎮 Logitech Actions SDK</span>
+                <span class="badge">📝 MIT License</span>
+            </div>
+            <div class="cta-buttons">
+                <a href="https://github.com/monodox/personakeys" class="btn btn-primary" target="_blank">View on GitHub</a>
+                <a href="https://github.com/monodox/personakeys#-quick-start" class="btn btn-secondary" target="_blank">Quick Start</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="container">
+            <h2>Why PersonaKeys?</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>On-Device AI</h3>
+                    <p>Local inference via Ollama (llama3.2:latest). Private, no cloud required, zero API costs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎛️</div>
+                    <h3>Physical Control</h3>
+                    <p>Actions Ring modulates AI behavior in real-time from strict to creative with tactile feedback.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>Clipboard Workflow</h3>
+                    <p>Seamless copy-process-paste integration. No UI windows, no context switching.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔌</div>
+                    <h3>Multi-Provider</h3>
+                    <p>Supports Ollama (local), OpenAI, Azure OpenAI, and Anthropic Claude.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📳</div>
+                    <h3>Haptic Feedback</h3>
+                    <p>Tactile response for every interaction: tick, pulse, confirmation, and error patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Extensible</h3>
+                    <p>Developer-first design with architecture ready for future persona packs.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="personas">
+            <div class="container">
+                <h2>4 Specialized Developer Personas</h2>
+                <div class="persona-grid">
+                    <div class="persona-card">
+                        <div class="persona-icon">🔍</div>
+                        <h3>Debugger</h3>
+                        <p>Root cause analysis and fix suggestions for code errors and stack traces.</p>
+                    </div>
+                    <div class="persona-card">
+                        <div class="persona-icon">🔧</div>
+                        <h3>Refactorer</h3>
+                        <p>Code quality improvements with strictness-aware refactoring strategies.</p>
+                    </div>
+                    <div class="persona-card">
+                        <div class="persona-icon">📝</div>
+                        <h3>Documenter</h3>
+                        <p>Inline comments, JSDoc, XML comments, and comprehensive documentation.</p>
+                    </div>
+                    <div class="persona-card">
+                        <div class="persona-icon">🏗️</div>
+                        <h3>Architect</h3>
+                        <p>Design pattern suggestions and architectural guidance for your code.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ring-control">
+            <div class="container">
+                <h2>Signature Feature: Ring Control</h2>
+                <p style="font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto;">
+                    The Actions Ring provides real-time control over AI behavior through multi-parameter modulation
+                </p>
+                <div class="ring-demo">
+                    <h3 style="margin-bottom: 20px;">Device-Native Differentiation</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ring Position</th>
+                                <th>Mode</th>
+                                <th>Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0-20</td>
+                                <td>Strict</td>
+                                <td>Deterministic, proven solutions</td>
+                            </tr>
+                            <tr>
+                                <td>20-40</td>
+                                <td>Conservative</td>
+                                <td>Safe, incremental changes</td>
+                            </tr>
+                            <tr>
+                                <td>40-60</td>
+                                <td>Balanced</td>
+                                <td>Pragmatic mix of approaches</td>
+                            </tr>
+                            <tr>
+                                <td>60-80</td>
+                                <td>Creative</td>
+                                <td>Modern patterns, refactoring</td>
+                            </tr>
+                            <tr>
+                                <td>80-100</td>
+                                <td>Experimental</td>
+                                <td>Novel solutions, structural rewrites</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 20px; font-size: 0.95rem; opacity: 0.9;">
+                        Ring position adjusts temperature (0.1-0.9), top_p (0.7-0.95), and repeat_penalty (1.05-1.2)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-start">
+            <div class="container">
+                <h2>Quick Start</h2>
+                <p style="text-align: center; font-size: 1.1rem; color: #666; margin-bottom: 30px;">
+                    Get started with PersonaKeys in 5 minutes
+                </p>
+                <div class="code-block">
+# Install Ollama (local AI runtime)
+# Download from https://ollama.ai
+
+# Pull the model
+ollama pull llama3.2:latest
+
+# Install .NET 8 SDK
+# Download from https://dotnet.microsoft.com/download/dotnet/8.0
+
+# Clone and build
+git clone https://github.com/monodox/personakeys.git
+cd personakeys/src
+dotnet build
+
+# Hot reload during development
+dotnet watch build
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://github.com/monodox/personakeys#-quick-start" class="btn btn-primary" target="_blank">Full Documentation</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="container" style="text-align: center; padding: 60px 0;">
+            <h2>Compatible Devices</h2>
+            <p style="font-size: 1.1rem; color: #666; margin-bottom: 20px;">
+                Works with Logitech Actions SDK compatible hardware
+            </p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px;">
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">MX Creative Console</div>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">Loupedeck CT</div>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">Loupedeck Live</div>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">Loupedeck Live S</div>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 8px;">Razer Stream Controller</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/monodox/personakeys" target="_blank">GitHub</a>
+                <a href="https://github.com/monodox/personakeys/blob/main/README.md" target="_blank">Documentation</a>
+                <a href="https://github.com/monodox/personakeys/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
+                <a href="https://github.com/monodox/personakeys/blob/main/ROADMAP.md" target="_blank">Roadmap</a>
+                <a href="https://github.com/monodox/personakeys/blob/main/SECURITY.md" target="_blank">Security</a>
+                <a href="https://github.com/monodox/personakeys/blob/main/LICENSE" target="_blank">License</a>
+            </div>
+            <p>&copy; 2026 PersonaKeys. Licensed under MIT License.</p>
+            <p style="margin-top: 10px; opacity: 0.7; font-size: 0.9rem;">
+                Built with the Logitech Actions SDK
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
