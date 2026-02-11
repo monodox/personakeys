@@ -1,0 +1,115 @@
+# PersonaKeys .gitignore
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Build Results
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Plugin link file (development)
+*.link
+
+# Logitech Plugin Service
+**/Logi/LogiPluginService/Plugins/*.link
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.sln.docstates
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Environment files
+*.env
+*.env.local
+.env
+
+# API Keys and Secrets
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+*.secrets
+
+# Mac
+.DS_Store
+*.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.swp
+*.swo
+*~
+
+# Package managers
+node_modules/
+bower_components/
+
+# IDE
+*.code-workspace
+.history/
+
+# Documentation generation
+docs/_build/
+_site/
+
+# Backup files
+*.bak
+*.backup
+*~

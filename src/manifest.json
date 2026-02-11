@@ -1,0 +1,63 @@
+{
+  "id": "com.personakeys.plugin",
+  "name": "PersonaKeys",
+  "version": "1.0.0",
+  "author": "PersonaKeys Team",
+  "description": "Hardware-native AI command surface for developers with 4 specialized coding assistants (Debugger, Refactorer, Documenter, Architect). Supports on-device inference via Ollama (llama3.2:latest) for private, low-latency AI actions. Features Actions Ring strictness control for real-time behavioral modulation.",
+  "icon": "assets/icon.png",
+  "pluginClass": "PersonaKeys.Plugin",
+  "supportedDevices": [
+    "MX Creative Console",
+    "Loupedeck CT",
+    "Loupedeck Live",
+    "Loupedeck Live S",
+    "Razer Stream Controller"
+  ],
+  "capabilities": {
+    "supportsHaptics": true,
+    "supportsAdjustments": true,
+    "supportsMultistate": true,
+    "requiresClipboard": true
+  },
+  "features": [
+    {
+      "name": "Debugger",
+      "description": "AI-powered code debugging and error analysis"
+    },
+    {
+      "name": "Refactorer", 
+      "description": "Intelligent code refactoring and optimization"
+    },
+    {
+      "name": "Documenter",
+      "description": "Generate inline comments and documentation"
+    },
+    {
+      "name": "Architect",
+      "description": "Design pattern suggestions and architectural guidance"
+    },
+    {
+      "name": "Strictness Control",
+      "description": "Actions Ring control for real-time AI behavior adjustment"
+    }
+  ],
+  "categories": [
+    "Productivity",
+    "AI",
+    "Development"
+  ],
+  "tags": [
+    "developer",
+    "coding",
+    "ai-assistant",
+    "refactoring",
+    "debugging",
+    "documentation",
+    "architecture",
+    "llm",
+    "clipboard",
+    "haptics"
+  ],
+  "website": "https://github.com/yourusername/personakeys",
+  "minSdkVersion": "1.0.0"
+}
