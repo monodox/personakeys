@@ -240,6 +240,67 @@ Always test on actual hardware before submitting:
 - Loupedeck devices
 - Razer Stream Controller (if available)
 
+## Packaging and Distribution
+
+### Creating a Plugin Package
+
+Before distributing PersonaKeys, package it as a `.lplug4` file:
+
+```bash
+# Build release version
+cd src
+dotnet build -c Release
+
+# Package the plugin
+logiplugintool pack ./bin/Release/ ./PersonaKeys.lplug4
+
+# Verify package integrity
+logiplugintool verify ./PersonaKeys.lplug4
+```
+
+**Package Requirements**:
+- Plugin icon in `metadata/` subfolder
+- Plugin configuration file: `metadata/LoupedeckPackage.yaml`
+- Naming convention: `PersonaKeys_1.0.0.lplug4`
+- `.lplug4` is a zip file with specific format
+
+### Marketplace Submission
+
+To submit to **Logitech Marketplace** and **Loupedeck Marketplace**:
+
+1. **Pre-submission checklist**:
+   - [ ] Tested with all supported hardware
+   - [ ] Complies with Marketplace Approval Guidelines
+   - [ ] Plugin icon included in metadata folder
+   - [ ] LoupedeckPackage.yaml configured correctly
+   - [ ] .lplug4 package passes verification
+   - [ ] All features documented
+   - [ ] Security best practices followed
+
+2. **Submit plugin**:
+   - Go to https://marketplace.logitech.com/contribute
+   - Fill out submission form
+   - Upload `.lplug4` package
+   - Provide plugin description, screenshots, documentation links
+
+3. **Installation**: Users can install by double-clicking the `.lplug4` file
+
+### Testing Guidelines
+- [ ] Action appears in device UI
+- [ ] Button press triggers action correctly
+- [ ] Loading state displays properly
+- [ ] Success feedback works (visual + haptic)
+- [ ] Error handling works correctly
+- [ ] Clipboard integration functions
+- [ ] Settings persist correctly
+- [ ] Works with multiple LLM providers
+
+### Hardware Testing
+Always test on actual hardware before submitting:
+- Logitech MX Creative Console
+- Loupedeck devices
+- Razer Stream Controller (if available)
+
 ## Submitting Changes
 
 ### Pull Request Process

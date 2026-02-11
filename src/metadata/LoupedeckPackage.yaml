@@ -1,0 +1,31 @@
+name: PersonaKeys
+version: 1.0.0
+author: PersonaKeys Contributors
+copyright: Copyright (c) 2026 PersonaKeys Contributors
+url: https://github.com/monodox/personakeys
+supportedDevices:
+  - MX Creative Console
+  - Loupedeck CT
+  - Loupedeck Live
+  - Loupedeck Live S
+  - Razer Stream Controller
+minimumSoftwareVersion: 6.0.0
+description: |
+  Hardware-native AI command surface for developers with 4 specialized coding assistants.
+  Supports on-device inference via Ollama (llama3.2:latest) for private, low-latency AI actions.
+  
+  Features:
+  - 4 Developer Personas: Debugger, Refactorer, Documenter, Architect
+  - Physical strictness control via Actions Ring (multi-parameter modulation)
+  - Haptic feedback for every interaction
+  - Clipboard workflow with no UI interruption
+  - Multi-provider support: Ollama (local), OpenAI, Azure OpenAI, Anthropic Claude
+  
+  Ring Control (Signature Feature):
+  - 0-20: Strict mode (deterministic, proven solutions)
+  - 20-40: Conservative (safe, incremental changes)
+  - 40-60: Balanced (pragmatic mix)
+  - 60-80: Creative (modern patterns)
+  - 80-100: Experimental (novel solutions, structural rewrites)
+  
+  Ring position adjusts temperature, top_p, and repeat_penalty in real-time for device-native AI control.

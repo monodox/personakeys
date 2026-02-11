@@ -162,6 +162,38 @@ personakeys/
 └── LICENSE                  # MIT License
 ```
 
+## 📦 Distribution
+
+### Packaging the Plugin
+
+Create a `.lplug4` package for distribution:
+
+```powershell
+# Build release version
+cd src
+dotnet build -c Release
+
+# Package the plugin
+logiplugintool pack ./bin/Release/ ./PersonaKeys.lplug4
+
+# Verify the package
+logiplugintool verify ./PersonaKeys.lplug4
+```
+
+**Package naming**: `PersonaKeys_1.0.0.lplug4` (recommended format: `pluginName_version.lplug4`)
+
+### Marketplace Submission
+
+Submit PersonaKeys to **Logitech Marketplace** and **Loupedeck Marketplace**:
+
+1. **Test thoroughly** with supported hardware and software
+2. **Ensure compliance** with [Marketplace Approval Guidelines](https://marketplace.logitech.com/contribute)
+3. **Include plugin icon** in `metadata/` subfolder
+4. **Package to .lplug4** (see above)
+5. **Submit** via: https://marketplace.logitech.com/contribute
+
+**Note**: A `.lplug4` file is a zip with specific format. Double-clicking installs it to Logi Plugin Service.
+
 ## 🤝 Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
