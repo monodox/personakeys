@@ -6,11 +6,11 @@
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Logitech Actions SDK](https://img.shields.io/badge/Logitech-Actions%20SDK-00B8FC)](https://developer.logi.com/actions-sdk)
 
-**What makes PersonaKeys unique?** It's a working proof-of-concept for hardware-driven AI—where physical dials and buttons replace typing. The Logitech MX Creative Console becomes your AI controller: twist the Actions Ring to shift from deterministic precision to creative exploration, press a button to invoke a coding persona. Built in C# using the official Logitech Actions SDK, PersonaKeys packages as a production-ready `.lplug4` plugin for marketplace distribution. And because it runs Ollama locally (llama3.2:latest), your code never leaves your machine—no API keys, no cloud calls, just instant inference.
+**What makes PersonaKeys unique?** PersonaKeys introduces hardware-native AI interaction—where physical dials and buttons modulate generative model behavior in real time. The Logitech MX Creative Console becomes your AI controller: twist the Actions Ring to shift from deterministic precision to creative exploration, press a button to invoke a coding persona. Built in C# using the official Logitech Actions SDK, PersonaKeys packages as a production-ready `.lplug4` plugin for marketplace distribution. By default, PersonaKeys runs Ollama locally (llama3.2:latest), so no API keys or cloud calls are required.
 
 ## ✨ Key Features
 
-- **On-Device AI**: Local inference via Ollama (private, no cloud required)
+- **On-Device AI**: Local inference via Ollama (private, no cloud required). Local inference eliminates API latency and per-request costs, improving responsiveness and scalability.
 - **4 Specialized Developer Personas**: Debugger, Refactorer, Documenter, Architect
 - **Physical Strictness Control**: Actions Ring adjusts AI creativity (0-100 → multi-parameter mapping)
 - **Haptic Feedback**: Tactile response for every interaction (tick, pulse, confirmation, error)
@@ -29,7 +29,6 @@
 - **A compatible device** for testing:
   - Logitech MX Creative Console
   - Loupedeck CT / Live / Live S
-  - Razer Stream Controller
 - **Optional**: [Ollama](https://ollama.ai) for local AI (recommended)
 
 ### Installation
@@ -86,7 +85,7 @@ Settings are stored in `personakeys-settings.json` in your plugin data directory
 {
   "apiProvider": "openai",
   "apiKey": "sk-...",
-  "model": "gpt-4",
+  "model": "gpt-4o",
   "temperature": 0.7
 }
 ```
@@ -123,7 +122,7 @@ The Actions Ring provides real-time control over AI behavior through multi-param
 | 60-80 | Creative | 0.7 | 0.9 | 1.15 | Modern patterns, refactoring |
 | 80-100 | Experimental | 0.9 | 0.95 | 1.2 | Novel solutions, structural rewrites |
 
-**This is device-native differentiation**: Ring position changes behavior in real-time by adjusting temperature (creativity), top_p (diversity), and repeat_penalty (conciseness).
+**Device-native differentiation**: the Actions Ring directly modulates temperature, top_p, and repeat_penalty in real time.
 
 **Example**: Refactoring the same code at strictness 10 vs. 90 produces visibly different results—from minimal variable fixes to complete functional rewrites.
 
