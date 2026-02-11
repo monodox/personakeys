@@ -5,18 +5,61 @@ Thank you for your interest in contributing to PersonaKeys! This document provid
 ## Development Setup
 
 ### Prerequisites
-- .NET 8 SDK
-- Visual Studio 2022 / VS Code / JetRides Rider
-- Logitech Options+ or Loupedeck software
-- Compatible hardware device for testing
+- **Basic knowledge of .NET and C# development**
+- **.NET 8 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
+- **A .NET IDE**:
+  - Visual Studio Code
+  - Visual Studio 2022 Community Edition or higher
+  - JetBrains Rider
+- **Logitech Options+** or **Loupedeck software**:
+  - Logitech Options+: https://www.logitech.com/software/logi-options-plus.html
+  - Loupedeck Software: https://loupedeck.com/downloads/
+- **LogiPluginTool** (Logitech Actions SDK CLI):
+  ```bash
+  dotnet tool install --global LogiPluginTool
+  ```
+- **Compatible hardware device** for testing:
+  - Logitech MX Creative Console
+  - Loupedeck CT / Live / Live S
+  - Razer Stream Controller
+- **Optional**: Ollama for local AI testing
 
 ### Getting Started
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/yourusername/personakeys.git`
-3. Create a feature branch: `git checkout -b feature/your-feature-name`
-4. Make your changes
-5. Test thoroughly on actual hardware
-6. Submit a pull request
+
+1. **Fork and clone**:
+   ```bash
+   git clone https://github.com/yourusername/personakeys.git
+   cd personakeys
+   ```
+
+2. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Build the plugin**:
+   ```bash
+   cd src
+   dotnet build
+   ```
+   This creates a `.link` file in the Logi Plugin Service's Plugins directory.
+
+4. **Verify plugin appears** in Logitech Options+ or Loupedeck software:
+   - **Options+**: 'All Actions' → 'Installed Plugins' → 'PersonaKeys'
+   - **Loupedeck**: Unhide in "Hide and show plugins" tab
+   - If not visible: Restart Logi Plugin Service in settings
+
+5. **Use Hot Reload for development**:
+   ```bash
+   cd src
+   dotnet watch build
+   ```
+   Changes to source files automatically rebuild and reload the plugin.
+   More info: https://devblogs.microsoft.com/dotnet/introducing-net-hot-reload/
+
+6. **Test thoroughly** on actual hardware
+
+7. **Submit a pull request**
 
 ## Project Architecture
 

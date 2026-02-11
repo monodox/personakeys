@@ -24,25 +24,46 @@ PersonaKeys is a Logitech Actions SDK plugin that provides hardware-native AI co
 
 ### Prerequisites
 
-- .NET 8 SDK - [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Logitech Options+ or Loupedeck software
-- Compatible device (MX Creative Console, Loupedeck, Razer Stream Controller)
-- Optional: [Ollama](https://ollama.ai) for local AI (recommended)
+- **Basic knowledge of .NET and C# development**
+- **.NET 8 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
+- **Logitech Options+** (for MX Creative Console) - [Download](https://www.logitech.com/software/logi-options-plus.html)
+- **Loupedeck Software** (for Loupedeck devices) - [Download](https://loupedeck.com/downloads/)
+- **A compatible device** for testing:
+  - Logitech MX Creative Console
+  - Loupedeck CT / Live / Live S
+  - Razer Stream Controller
+- **Optional**: [Ollama](https://ollama.ai) for local AI (recommended)
 
 ### Installation
 
-```powershell
-# Install the plugin tool
-dotnet tool install --global LogiPluginTool
+1. **Install LogiPluginTool** (Logitech Actions SDK command-line tool):
+   ```powershell
+   dotnet tool install --global LogiPluginTool
+   ```
 
-# Clone and build
-git clone https://github.com/yourusername/personakeys.git
-cd personakeys/src
-dotnet build
+2. **Clone and build PersonaKeys**:
+   ```powershell
+   git clone https://github.com/monodox/personakeys.git
+   cd personakeys/src
+   dotnet build
+   ```
 
-# Hot reload during development
-dotnet watch build
-```
+3. **Verify plugin installation**:
+   - The build creates a `.link` file in:
+     - Windows: `C:\Users\USERNAME\AppData\Local\Logi\LogiPluginService\Plugins\PersonaKeys.link`
+     - macOS: `~/Library/Application Support/Logi/LogiPluginService/Plugins/PersonaKeys.link`
+
+4. **Launch Logitech Options+ or Loupedeck software**:
+   - **Options+**: Navigate to 'All Actions' → 'Installed Plugins' → 'PersonaKeys'
+   - **Loupedeck**: Unhide PersonaKeys in "Hide and show plugins" tab
+   - If not visible, restart Logi Plugin Service in software settings
+
+5. **Hot reload during development**:
+   ```powershell
+   cd personakeys/src
+   dotnet watch build
+   ```
+   Changes to source files automatically rebuild and reload the plugin.
 
 ### Configuration
 
