@@ -6,9 +6,7 @@
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Logitech Actions SDK](https://img.shields.io/badge/Logitech-Actions%20SDK-00B8FC)](https://developer.logi.com/actions-sdk)
 
-PersonaKeys is a Logitech Actions SDK plugin that provides hardware-native AI coding assistants with physical strictness control. Map specialized AI personas to hardware buttons and use the Actions Ring to modulate AI behavior in real-time.
-
-**PersonaKeys supports on-device inference via Ollama (llama3.2:latest), enabling private, low-latency AI actions without cloud dependencies.**
+**What makes PersonaKeys unique?** It's a working proof-of-concept for hardware-driven AI—where physical dials and buttons replace typing. The Logitech MX Creative Console becomes your AI controller: twist the Actions Ring to shift from deterministic precision to creative exploration, press a button to invoke a coding persona. Built in C# using the official Logitech Actions SDK, PersonaKeys packages as a production-ready `.lplug4` plugin for marketplace distribution. And because it runs Ollama locally (llama3.2:latest), your code never leaves your machine—no API keys, no cloud calls, just instant inference.
 
 ## ✨ Key Features
 
