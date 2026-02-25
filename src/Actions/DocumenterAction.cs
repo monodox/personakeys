@@ -1,13 +1,8 @@
-using Logi.PluginCore.Attributes;
+using Loupedeck;
 using PersonaKeys.Models;
 
 namespace PersonaKeys.Actions;
 
-/// <summary>
-/// AI-powered code documentation generator
-/// Generates inline comments and summary documentation for functions/classes
-/// </summary>
-[PluginAction]
 public class DocumenterAction : BasePersonaAction
 {
     private const string SystemPrompt = @"You are a documentation writer. Generate:
@@ -15,33 +10,26 @@ public class DocumenterAction : BasePersonaAction
 **Documented Code:** [original code with inline comments + docstrings]
 
 Match the language style (JSDoc for JS/TS, XML for C#, docstrings for Python, etc.).
-No essays—just add inline comments for complex logic and function/method docs.
-<END>";
+No essays—just add inline comments for complex logic and function/method docs.";
 
-    public override string Name => "Documenter";
-    public override string Description => "Generate inline comments and documentation";
-
-    protected override void OnButtonPress()
+    public DocumenterAction()
+        : base("Documenter", "Generate inline comments and documentation")
+    { }
+    protected override void RunCommand(string actionParameter)
     {
-        _ = ExecuteDocumentAsync();
+        _ = ExecuteAsync();
     }
 
-    private async Task ExecuteDocumentAsync()
+    private async Task ExecuteAsync()
     {
         ShowLoading();
-
         try
         {
             var code = ClipboardService.GetText();
-            
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                ShowError("No code found in clipboard");
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(code)) { ShowError("No code in clipboard"); return; }
 
             var settings = SettingsService.GetSettings();
-            var request = new LLMRequest
+            var response = await LLMService.SendRequestAsync(new LLMRequest
             {
                 SystemPrompt = SystemPrompt,
                 UserPrompt = $"Add documentation to this code:\n\n{code}",
@@ -49,23 +37,11 @@ No essays—just add inline comments for complex logic and function/method docs.
                 TopP = settings.TopP,
                 RepeatPenalty = settings.RepeatPenalty,
                 MaxTokens = 1200
-            };
+            });
 
-            var response = await LLMService.SendRequestAsync(request);
-
-            if (response.Success)
-            {
-                ClipboardService.SetText(response.Content);
-                ShowSuccess();
-            }
-            else
-            {
-                ShowError($"Documentation failed: {response.Error}");
-            }
+            if (response.Success) { ClipboardService.SetText(response.Content); ShowSuccess(); }
+            else ShowError($"Documentation failed: {response.Error}");
         }
-        catch (Exception ex)
-        {
-            ShowError($"Error: {ex.Message}");
-        }
+        catch (Exception ex) { ShowError($"Error: {ex.Message}"); }
     }
 }

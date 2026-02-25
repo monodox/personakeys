@@ -2,115 +2,93 @@
 
 All notable changes to PersonaKeys will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+
+---
 
 ## [Unreleased]
 
-### Changed
-- **Ollama Integration Improvements**:
-  - Switched from `/api/generate` to `/api/chat` for structured messages
-  - Updated default model to `llama3.2:latest`
-  - Added model availability checking on plugin startup
-  - Improved error messages with actionable instructions
-- **Enhanced Ring Parameterization**:
-  - Ring now controls temperature (0.1-0.9), top_p (0.7-0.95), and repeat_penalty (1.05-1.2)
-  - Multi-parameter modulation for finer behavioral control
-- **Tightened Persona Prompts**:
-  - Reduced verbosity with explicit output format constraints
-  - Added stop tokens (`\n\n---\n\n`, `<END>`) to prevent runaway generation
-  - Lowered max tokens per persona (800-1200) for concise responses
-- **Documentation Updates**:
-  - Emphasized on-device inference capability in README
-  - Added LLM integration details to CONTRIBUTING.md
-  - Updated configuration examples with new parameters
-
 ### Planned
-- Custom persona creation UI
+- Interactive settings UI (form inputs, not just display)
+- Custom persona creation via JSON/YAML
 - Persona pack marketplace
-- Context memory across sessions
-- Multi-platform clipboard support
+- Session memory across interactions
+- Direct IDE integration (VS Code, JetBrains)
+- macOS clipboard support
 - Custom icon editor
-- Persona presets and templates
-- Export/import persona configurations
 
-## [1.0.0] - 2026-02-12
+---
+
+## [1.0.0] - 2026-02-25
 
 ### Added
-- Initial release of PersonaKeys
-- **Developer Persona Pack** with 4 specialized AI operators:
-  - **Debugger**: Root cause analysis and fix suggestions
-  - **Refactorer**: Code optimization with strictness-aware output
-  - **Documenter**: Inline comment and documentation generation
-  - **Architect**: Design pattern suggestions and architectural guidance
-- **Actions Ring Strictness Control**: 0-100 mapping to multiple AI parameters
-  - Ring controls: temperature (creativity), top_p (diversity), repeat_penalty (conciseness)
-  - 0-20 → Strict mode (T=0.1, P=0.7, RP=1.05)
-  - 20-40 → Conservative mode (T=0.3, P=0.8, RP=1.08)
-  - 40-60 → Balanced mode (T=0.5, P=0.85, RP=1.1)
-  - 60-80 → Creative mode (T=0.7, P=0.9, RP=1.15)
-  - 80-100 → Experimental mode (T=0.9, P=0.95, RP=1.2)
-- **Haptic Feedback Patterns**:
-  - Ring turn → Tactile tick
-  - AI invoked → Pulse
-  - Success → Confirmation vibration
-  - Error → Distinct error vibration
-- **Clipboard Workflow**: Seamless copy-process-paste integration
-- **Multi-Provider LLM Support**:
-  - Ollama (local, recommended)
-  - OpenAI (GPT-4, GPT-3.5)
+
+**Core plugin**
+- `PersonaKeysPlugin` — main plugin entry point extending `Loupedeck.Plugin`
+- `PluginLog` helper wrapping `PluginLogFile` for SDK-integrated logging
+- Startup Ollama model availability check (non-blocking, writes hint to clipboard if model missing)
+
+**Developer Persona Pack — 4 actions**
+- `DebuggerAction` — root cause analysis + minimal fix from clipboard code/stack trace
+- `RefactorAction` — code quality and readability improvements
+- `DocumenterAction` — inline comments and docstrings (JSDoc, XML, Python)
+- `ArchitectAction` — design pattern suggestions with trade-off comparison
+
+**Strictness dial**
+- `StrictnessAdjustmentAction` — `PluginDynamicAdjustment` mapping 0–100 ring position to three LLM parameters simultaneously
+  - 0–20 Strict: temperature=0.1, topP=0.70, repeatPenalty=1.05
+  - 20–40 Conservative: temperature=0.3, topP=0.80, repeatPenalty=1.08
+  - 40–60 Balanced: temperature=0.5, topP=0.85, repeatPenalty=1.10
+  - 60–80 Creative: temperature=0.7, topP=0.90, repeatPenalty=1.15
+  - 80–100 Experimental: temperature=0.9, topP=0.95, repeatPenalty=1.20
+- Reset button returns to Balanced (50)
+- Dial label shows current mode and value in real time
+
+**Settings**
+- `SettingsAction` — logs current configuration on press
+- `SettingsService` — JSON persistence at `%LOCALAPPDATA%\Logi\LogiPluginService\PluginData\PersonaKeys\personakeys-settings.json`
+
+**LLM service**
+- `LLMService` — multi-provider HTTP client
+  - Ollama via `/api/chat` (structured system/user messages)
+  - OpenAI Chat Completions API
   - Azure OpenAI
-  - Anthropic Claude
-- **Settings Management**: Persistent configuration storage
-- **Settings Action**: Display current plugin configuration
-- **Base Architecture**: Service-based design (LLM, Clipboard, Settings)
-- **Windows Clipboard Integration**: Native P/Invoke implementation
-- **Error Handling**: Comprehensive try-catch with user feedback
-- **Logging**: SDK-integrated logging system
-- **Documentation**:
-  - Comprehensive README
-  - Contributing guidelines
-  - Security policy
-  - Code of conduct
-  - MIT License
+  - Anthropic Messages API
+- Model availability check for Ollama on startup
+- Configurable timeout (default 60s)
 
-### Technical Details
-- **Platform**: .NET 8 / C#
-- **SDK**: Logitech Actions SDK
-- **Architecture**: Plugin with service layer abstraction
-- **Supported Devices**:
-  - Logitech MX Creative Console
-  - Loupedeck CT
-  - Loupedeck Live
-  - Loupedeck Live S
-  - Razer Stream Controller
+**Clipboard service**
+- `ClipboardService` — Windows clipboard via P/Invoke (`user32.dll`, `kernel32.dll`)
+- Unicode read/write with retry-safe open/close pattern
 
-### Developer Experience
-- Hot reload support with `dotnet watch build`
-- Clean separation of concerns
-- XML documentation comments
-- NuGet package management
-- Visual Studio / VS Code / Rider support
+**Build system**
+- `PersonaKeys.csproj` referencing `PluginApi.dll` from `C:\Program Files\Logi\LogiPluginService\`
+- PostBuild target writes `.link` file to Logi Plugin Service plugins directory
+- PostBuild target sends `loupedeck:plugin/PersonaKeys/reload` for hot reload
+- `System.Text.Json` 9.0.0 (patched from vulnerable 8.0.0)
 
-## Version History
+### Fixed
+- Replaced `Logi.PluginCore` NuGet reference (does not exist on nuget.org) with direct `PluginApi.dll` reference from installed Logi Plugin Service
+- Fixed `SetClipboardData` P/Invoke return type comparison
+- Removed `BasePlugin`/`GetPluginSetting` dependency from `SettingsService` (not available in SDK)
+- Corrected `PluginDynamicCommand` and `PluginDynamicAdjustment` constructor signatures (positional, no named params)
 
-### [1.0.0] - 2026-02-12
-*Initial public release*
+### Security
+- [SECURITY] Upgraded `System.Text.Json` from 8.0.0 to 9.0.0 (fixes GHSA-8g4q-xg66-9fp4, GHSA-hh2w-p6rv-4g7w)
 
 ---
 
 ## Categories
 
-Changes are grouped into these categories:
+- Added — new features
+- Changed — changes in existing functionality
+- Deprecated — soon-to-be removed features
+- Removed — removed features
+- Fixed — bug fixes
+- Security — vulnerability fixes (tagged `[SECURITY]`)
 
-- **Added**: New features
-- **Changed**: Changes in existing functionality
-- **Deprecated**: Soon-to-be removed features
-- **Removed**: Now removed features
-- **Fixed**: Bug fixes
-- **Security**: Vulnerability fixes (marked with `[SECURITY]`)
+---
 
-## Links
-
-- [Unreleased]: https://github.com/yourusername/personakeys/compare/v1.0.0...HEAD
-- [1.0.0]: https://github.com/yourusername/personakeys/releases/tag/v1.0.0
+[Unreleased]: https://github.com/monodox/personakeys/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/monodox/personakeys/releases/tag/v1.0.0

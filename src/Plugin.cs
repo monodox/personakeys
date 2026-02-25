@@ -1,56 +1,38 @@
-using Logi.PluginCore;
-using Logi.PluginCore.Attributes;
+using Loupedeck;
 using PersonaKeys.Services;
 
 namespace PersonaKeys;
 
 /// <summary>
 /// PersonaKeys - Hardware-native AI command surface for developers.
-/// 
-/// ARCHITECTURE:
-/// PersonaKeys provides a Developer Persona Pack with 4 specialized coding assistants,
-/// designed to expand via downloadable persona packs for other use cases.
-/// 
-/// DEVELOPER PERSONAS:
-/// - Debugger: Root cause analysis + fix suggestions
-/// - Refactorer: Code optimization (strictness-aware)
-/// - Documenter: Inline comments + comprehensive docs
-/// - Architect: Design pattern suggestions
-/// 
-/// KEY INNOVATION:
-/// Actions Ring controls Strictness/Creativity (0-100), producing visibly different
-/// AI outputs from conservative to aggressive.
-/// 
-/// HAPTIC FEEDBACK:
-/// - Ring turn → tactile tick
-/// - AI invoked → pulse
-/// - Success → confirmation vibration
-/// - Error → distinct error vibration
-/// 
-/// EXTENSIBILITY:
-/// Future persona packs can target writers, students, marketers, designers, etc.
+/// Personas: Debugger, Refactorer, Documenter, Architect
+/// Actions Ring controls Strictness/Creativity (0-100)
 /// </summary>
-[Plugin]
-public class Plugin : BasePlugin
+public class PersonaKeysPlugin : Plugin
 {
+    public override Boolean UsesApplicationApiOnly => true;
+    public override Boolean HasNoApplication => true;
+
     private LLMService? _llmService;
     private ClipboardService? _clipboardService;
     private SettingsService? _settingsService;
 
+    public PersonaKeysPlugin()
+    {
+        PluginLog.Init(this.Log);
+    }
+
     public override void Load()
     {
-        // Initialize services
-        _settingsService = new SettingsService(this);
+        _settingsService = new SettingsService();
         _llmService = new LLMService(_settingsService);
         _clipboardService = new ClipboardService();
 
-        Log.Info("PersonaKeys loaded successfully");
-        Log.Info("Available personas: Debugger, Refactorer, Documenter, Architect");
-        
-        // Check Ollama model availability on startup (non-blocking)
+        PluginLog.Info("PersonaKeys loaded. Personas: Debugger, Refactorer, Documenter, Architect");
+
         _ = CheckOllamaModelAsync();
     }
-    
+
     private async Task CheckOllamaModelAsync()
     {
         try
@@ -58,21 +40,17 @@ public class Plugin : BasePlugin
             var settings = _settingsService?.GetSettings();
             if (settings?.ApiProvider.ToLowerInvariant() == "ollama")
             {
-                var modelAvailable = await _llmService!.CheckOllamaModelAsync();
-                if (!modelAvailable)
+                var available = await _llmService!.CheckOllamaModelAsync();
+                if (!available)
                 {
-                    Log.Warning($"Ollama model '{settings.Model}' not found. Run: ollama pull {settings.Model}");
+                    PluginLog.Warning($"Ollama model '{settings.Model}' not found. Run: ollama pull {settings.Model}");
                     _clipboardService?.SetText($"Run: ollama pull {settings.Model}");
-                }
-                else
-                {
-                    Log.Info($"Ollama model '{settings.Model}' is available");
                 }
             }
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed to check Ollama model: {ex.Message}");
+            PluginLog.Error($"Failed to check Ollama model: {ex.Message}");
         }
     }
 
@@ -80,8 +58,7 @@ public class Plugin : BasePlugin
     {
         _llmService?.Dispose();
         _clipboardService?.Dispose();
-        
-        Log.Info("PersonaKeys plugin unloaded");
+        PluginLog.Info("PersonaKeys unloaded");
     }
 
     public LLMService GetLLMService() => _llmService ?? throw new InvalidOperationException("LLM Service not initialized");

@@ -1,13 +1,11 @@
-using Logi.PluginCore.Attributes;
+using Loupedeck;
 using PersonaKeys.Models;
 
 namespace PersonaKeys.Actions;
 
 /// <summary>
-/// AI-powered code debugger action
-/// Analyzes code from clipboard and provides debugging insights
+/// AI-powered code debugger — analyzes clipboard code and returns root cause + fix
 /// </summary>
-[PluginAction]
 public class DebuggerAction : BasePersonaAction
 {
     private const string SystemPrompt = @"You are a code debugger. Analyze the provided code/stack trace and respond with:
@@ -16,35 +14,27 @@ public class DebuggerAction : BasePersonaAction
 **Minimal Fix:** [specific code change]
 **Why:** [1-2 bullets]
 
-If context is missing, state assumptions explicitly. Keep sections SHORT. Use code blocks only when needed.
-<END>";
+If context is missing, state assumptions explicitly. Keep sections SHORT. Use code blocks only when needed.";
 
-    public override string Name => "AI Debugger";
-    public override string Description => "Analyze and debug code from clipboard";
+    public DebuggerAction()
+        : base("AI Debugger", "Analyze and debug code from clipboard")
+    { }
 
-    protected override void OnButtonPress()
+    protected override void RunCommand(string actionParameter)
     {
-        _ = ExecuteDebugAsync();
+        _ = ExecuteAsync();
     }
 
-    private async Task ExecuteDebugAsync()
+    private async Task ExecuteAsync()
     {
         ShowLoading();
-
         try
         {
-            // Get code from clipboard
             var code = ClipboardService.GetText();
-            
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                ShowError("No code found in clipboard");
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(code)) { ShowError("No code in clipboard"); return; }
 
-            // Send to LLM with current strictness setting
             var settings = SettingsService.GetSettings();
-            var request = new LLMRequest
+            var response = await LLMService.SendRequestAsync(new LLMRequest
             {
                 SystemPrompt = SystemPrompt,
                 UserPrompt = $"Debug this code:\n\n{code}",
@@ -52,24 +42,11 @@ If context is missing, state assumptions explicitly. Keep sections SHORT. Use co
                 TopP = settings.TopP,
                 RepeatPenalty = settings.RepeatPenalty,
                 MaxTokens = 1200
-            };
+            });
 
-            var response = await LLMService.SendRequestAsync(request);
-
-            if (response.Success)
-            {
-                // Copy result back to clipboard
-                ClipboardService.SetText(response.Content);
-                ShowSuccess();
-            }
-            else
-            {
-                ShowError($"Debug failed: {response.Error}");
-            }
+            if (response.Success) { ClipboardService.SetText(response.Content); ShowSuccess(); }
+            else ShowError($"Debug failed: {response.Error}");
         }
-        catch (Exception ex)
-        {
-            ShowError($"Error: {ex.Message}");
-        }
+        catch (Exception ex) { ShowError($"Error: {ex.Message}"); }
     }
 }

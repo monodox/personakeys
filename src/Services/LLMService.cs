@@ -2,7 +2,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using PersonaKeys.Models;
-using Logi.PluginCore;
+
 
 namespace PersonaKeys.Services;
 
@@ -47,7 +47,7 @@ public class LLMService : IDisposable
         }
         catch (Exception ex)
         {
-            Log.Error($"LLM request failed: {ex.Message}");
+            PluginLog.Error($"LLM request failed: {ex.Message}");
             return new LLMResponse
             {
                 Success = false,

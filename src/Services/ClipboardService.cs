@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using System.Text;
-using Logi.PluginCore;
 
 namespace PersonaKeys.Services;
 
@@ -45,7 +44,7 @@ public class ClipboardService : IDisposable
         {
             if (!OpenClipboard(IntPtr.Zero))
             {
-                Log.Warning("Failed to open clipboard");
+                PluginLog.Warning("Failed to open clipboard");
                 return string.Empty;
             }
 
@@ -79,7 +78,7 @@ public class ClipboardService : IDisposable
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed to get clipboard text: {ex.Message}");
+            PluginLog.Error($"Failed to get clipboard text: {ex.Message}");
             return string.Empty;
         }
     }
@@ -93,7 +92,7 @@ public class ClipboardService : IDisposable
         {
             if (!OpenClipboard(IntPtr.Zero))
             {
-                Log.Warning("Failed to open clipboard");
+                PluginLog.Warning("Failed to open clipboard");
                 return false;
             }
 
@@ -124,12 +123,12 @@ public class ClipboardService : IDisposable
                     GlobalUnlock(hGlobal);
                 }
 
-                if (SetClipboardData(CF_UNICODETEXT, hGlobal) == IntPtr.Zero)
+                if (!SetClipboardData(CF_UNICODETEXT, hGlobal))
                 {
                     return false;
                 }
 
-                Log.Info("Text copied to clipboard");
+                PluginLog.Info("Text copied to clipboard");
                 return true;
             }
             finally
@@ -139,7 +138,7 @@ public class ClipboardService : IDisposable
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed to set clipboard text: {ex.Message}");
+            PluginLog.Error($"Failed to set clipboard text: {ex.Message}");
             return false;
         }
     }

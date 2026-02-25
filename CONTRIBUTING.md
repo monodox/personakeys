@@ -1,130 +1,97 @@
 # Contributing to PersonaKeys
 
-Thank you for your interest in contributing to PersonaKeys! This document provides guidelines and instructions for contributing.
+Thanks for your interest in contributing. This document covers setup, architecture, coding standards, and the PR process.
+
+---
 
 ## Development Setup
 
 ### Prerequisites
-- **Basic knowledge of .NET and C# development**
-- **.NET 8 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
-- **A .NET IDE**:
-  - Visual Studio Code
-  - Visual Studio 2022 Community Edition or higher
-  - JetBrains Rider
-- **Logitech Options+** or **Loupedeck software**:
-  - Logitech Options+: https://www.logitech.com/software/logi-options-plus.html
-  - Loupedeck Software: https://loupedeck.com/downloads/
-- **LogiPluginTool** (Logitech Actions SDK CLI):
-  ```bash
+
+- .NET 8 SDK — [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Logitech Options+ — [Download](https://www.logitech.com/software/logi-options-plus.html) or Loupedeck Software — [Download](https://loupedeck.com/downloads/)
+- LogiPluginTool:
+  ```powershell
   dotnet tool install --global LogiPluginTool
   ```
-- **Compatible hardware device** for testing:
-  - Logitech MX Creative Console
-  - Loupedeck CT / Live / Live S
-  - Razer Stream Controller
-- **Optional**: Ollama for local AI testing
+- A compatible device: Logitech MX Creative Console, Loupedeck CT / Live / Live S, or Razer Stream Controller
+- Ollama for local AI testing — [Download](https://ollama.ai)
 
-### Getting Started
+### Getting started
 
-1. **Fork and clone**:
-   ```bash
-   git clone https://github.com/yourusername/personakeys.git
-   cd personakeys
-   ```
-
-2. **Create a feature branch**:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **Build the plugin**:
-   ```bash
-   cd src
-   dotnet build
-   ```
-   This creates a `.link` file in the Logi Plugin Service's Plugins directory.
-
-4. **Verify plugin appears** in Logitech Options+ or Loupedeck software:
-   - **Options+**: 'All Actions' → 'Installed Plugins' → 'PersonaKeys'
-   - **Loupedeck**: Unhide in "Hide and show plugins" tab
-   - If not visible: Restart Logi Plugin Service in settings
-
-5. **Use Hot Reload for development**:
-   ```bash
-   cd src
-   dotnet watch build
-   ```
-   Changes to source files automatically rebuild and reload the plugin.
-   More info: https://devblogs.microsoft.com/dotnet/introducing-net-hot-reload/
-
-6. **Test thoroughly** on actual hardware
-
-7. **Submit a pull request**
-
-## Project Architecture
-
-### Key Components
-
-**Plugin.cs**
-- Main entry point
-- Service initialization
-- Plugin lifecycle management
-
-**Actions/**
-- Individual AI command implementations
-- Each action inherits from `BasePersonaAction`
-- Follows SDK conventions for button press, adjustments, etc.
-
-**Services/**
-- `LLMService`: Handles all LLM provider communication
-- `ClipboardService`: Windows clipboard integration
-- `SettingsService`: Plugin settings management
-
-**Models/**
-- Data structures and DTOs
-- Settings classes
-- Request/Response models
-
-## Coding Standards
-
-### C# Style Guide
-- Follow standard C# naming conventions
-- Use `PascalCase` for classes, methods, properties
-- Use `camelCase` for private fields (with `_` prefix)
-- Use meaningful variable names
-- Add XML documentation comments for public APIs
-
-### Example
-```csharp
-/// <summary>
-/// Sends a request to the LLM provider
-/// </summary>
-/// <param name="request">The LLM request to send</param>
-/// <returns>The LLM response</returns>
-public async Task<LLMResponse> SendRequestAsync(LLMRequest request)
-{
-    // Implementation
-}
+```powershell
+git clone https://github.com/monodox/personakeys.git
+cd personakeys/src
+dotnet build
 ```
 
-## Adding New Actions
+The build writes a `.link` file to `%LOCALAPPDATA%\Logi\LogiPluginService\Plugins\PersonaKeys.link` and sends a reload signal. Open Logitech Options+ or Loupedeck software — PersonaKeys should appear under installed plugins. If not, restart Logi Plugin Service in the software settings.
 
-### Step 1: Create Action Class
-Create a new file in `src/Actions/`
+For hot reload during development:
+```powershell
+cd personakeys/src
+dotnet watch build
+```
+
+---
+
+## Architecture
+
+```
+Plugin.cs                    # Entry point — initializes services, checks Ollama on load
+Helpers/PluginLog.cs         # Thin wrapper around SDK PluginLogFile
+Actions/
+  BasePersonaAction.cs       # Extends PluginDynamicCommand, exposes services
+  DebuggerAction.cs          # Root cause + fix
+  RefactorAction.cs          # Code quality improvements
+  DocumenterAction.cs        # Inline comments + docstrings
+  ArchitectAction.cs         # Design pattern suggestions
+  StrictnessAdjustmentAction.cs  # PluginDynamicAdjustment — the dial
+  SettingsAction.cs          # Logs current config on press
+Services/
+  LLMService.cs              # HTTP client for Ollama, OpenAI, Azure, Anthropic
+  ClipboardService.cs        # Windows clipboard via P/Invoke
+  SettingsService.cs         # JSON file persistence
+Models/
+  Models.cs                  # PluginSettings, LLMRequest, LLMResponse, PersonaCommand
+```
+
+### SDK types used
+
+| SDK type | Used for |
+|----------|----------|
+| `Loupedeck.Plugin` | Plugin entry point |
+| `Loupedeck.PluginDynamicCommand` | Button actions (personas) |
+| `Loupedeck.PluginDynamicAdjustment` | Dial action (strictness ring) |
+| `Loupedeck.PluginLogFile` | Logging |
+
+### Settings file location
+
+`%LOCALAPPDATA%\Logi\LogiPluginService\PluginData\PersonaKeys\personakeys-settings.json`
+
+---
+
+## Adding a New Persona
+
+1. Create `src/Actions/MyPersonaAction.cs`:
 
 ```csharp
-using Logi.PluginCore.Attributes;
+using Loupedeck;
 using PersonaKeys.Models;
 
 namespace PersonaKeys.Actions;
 
-[PluginAction]
-public class MyNewAction : BasePersonaAction
+public class MyPersonaAction : BasePersonaAction
 {
-    public override string Name => "My Action";
-    public override string Description => "What this action does";
+    private const string SystemPrompt = @"You are a [role]. Provide:
+**Output:** [format]
+Keep it SHORT.";
 
-    protected override void OnButtonPress()
+    public MyPersonaAction()
+        : base("My Persona", "What this persona does")
+    { }
+
+    protected override void RunCommand(string actionParameter)
     {
         _ = ExecuteAsync();
     }
@@ -132,241 +99,104 @@ public class MyNewAction : BasePersonaAction
     private async Task ExecuteAsync()
     {
         ShowLoading();
-        
         try
         {
             var input = ClipboardService.GetText();
-            
-            // Your logic here
-            
-            ShowSuccess();
+            if (string.IsNullOrWhiteSpace(input)) { ShowError("No content in clipboard"); return; }
+
+            var settings = SettingsService.GetSettings();
+            var response = await LLMService.SendRequestAsync(new LLMRequest
+            {
+                SystemPrompt = SystemPrompt,
+                UserPrompt = $"Process this:\n\n{input}",
+                Temperature = settings.Temperature,
+                TopP = settings.TopP,
+                RepeatPenalty = settings.RepeatPenalty,
+                MaxTokens = 1000
+            });
+
+            if (response.Success) { ClipboardService.SetText(response.Content); ShowSuccess(); }
+            else ShowError($"Failed: {response.Error}");
         }
-        catch (Exception ex)
-        {
-            ShowError(ex.Message);
-        }
+        catch (Exception ex) { ShowError(ex.Message); }
     }
 }
 ```
 
-### Step 2: Add Icon
-- Create an icon in `assets/` directory
-- Reference it in your action
+2. Build and test on hardware.
 
-### Step 3: Test
-- Build the project
-- Test on actual hardware
-- Verify haptic feedback
-- Test with different LLM providers
+### Persona prompt guidelines
 
-## Adding New LLM Providers
+- Use tight system prompts with explicit output format
+- Specify section headers (e.g., `**Root Cause:**`)
+- Keep `MaxTokens` between 800–1200
+- State assumptions explicitly when context is missing
+- Avoid open-ended instructions that produce essays
 
-To add support for a new LLM provider:
+---
 
-1. Add a new method in `LLMService.cs`
-2. Follow the existing pattern (Ollama, OpenAI, etc.)
-3. Update `PluginSettings` model if needed
-4. Handle authentication appropriately
-5. Test thoroughly
+## Adding a New LLM Provider
 
-## LLM Integration Details (Ollama)
+1. Add a private method in `LLMService.cs` following the existing pattern
+2. Add the provider name to the switch in `SendRequestAsync`
+3. Update `PluginSettings.ApiProvider` docs in `Models.cs`
+4. Test with real credentials
 
-### Default Configuration
+---
 
-**Runtime**: Ollama (local inference)  
-**Model**: `llama3.2:latest` (default)  
-**Transport**: HTTP to `http://127.0.0.1:11434`  
-**API**: `/api/chat` (supports structured system/user messages)
+## Coding Standards
 
-**Why /api/chat over /api/generate?**
-- Structured message format (system/user roles)
-- Better for persona-based prompting
-- Consistent with OpenAI/Anthropic APIs
+- Follow standard C# conventions: `PascalCase` for types/methods/properties, `_camelCase` for private fields
+- Add XML doc comments on public APIs
+- Keep methods short and focused
+- Handle exceptions at the action level — services throw, actions catch
+- Never log clipboard contents
 
-### Ring-Driven Parameterization
+---
 
-Ring position (0-100) maps to multiple generation parameters:
+## Pull Request Process
 
-| Parameter | Range | Purpose |
-|-----------|-------|---------|
-| `temperature` | 0.1 → 0.9 | Creativity/randomness |
-| `top_p` | 0.7 → 0.95 | Sampling diversity |
-| `repeat_penalty` | 1.05 → 1.2 | Reduces verbose repetition |
-
-**Implementation**: See `StrictnessAdjustmentAction.MapStrictnessToParameters()`
-
-### Persona Prompt Best Practices
-
-To prevent llama3.2 verbosity:
-
-1. **Use tight system prompts** with explicit constraints
-2. **Specify output format** (e.g., "Root Cause: [explanation]")
-3. **Add stop tokens**: `["\n\n---\n\n", "<END>"]` in system prompt
-4. **Limit max tokens**: 800-1200 per persona (not 2048+)
-5. **State assumptions explicitly** when context is missing
-
-**Example** (Debugger persona):
-```
-Root Cause: [1-2 sentences]
-Minimal Fix: [code change]
-Why: [2 bullets]
-<END>
-```
-
-### Error Handling
-
-1. **Check model availability** on plugin load (`CheckOllamaModelAsync()`)
-2. **Handle timeouts gracefully** (default 60s)
-3. **Provide actionable error messages**:
-   - Missing model: `"Run: ollama pull llama3.2:latest"`
-   - Connection fail: Check endpoint reachability
-4. **Never log clipboard contents** (privacy consideration)
-
-## Testing Guidelines
-
-### Manual Testing Checklist
-- [ ] Action appears in device UI
-- [ ] Button press triggers action correctly
-- [ ] Loading state displays properly
-- [ ] Success feedback works (visual + haptic)
-- [ ] Error handling works correctly
-- [ ] Clipboard integration functions
-- [ ] Settings persist correctly
-- [ ] Works with multiple LLM providers
-
-### Hardware Testing
-Always test on actual hardware before submitting:
-- Logitech MX Creative Console
-- Loupedeck devices
-- Razer Stream Controller (if available)
-
-## Packaging and Distribution
-
-### Creating a Plugin Package
-
-Before distributing PersonaKeys, package it as a `.lplug4` file:
-
-```bash
-# Build release version
-cd src
-dotnet build -c Release
-
-# Package the plugin
-logiplugintool pack ./bin/Release/ ./PersonaKeys.lplug4
-
-# Verify package integrity
-logiplugintool verify ./PersonaKeys.lplug4
-```
-
-**Package Requirements**:
-- Plugin icon in `metadata/` subfolder
-- Plugin configuration file: `metadata/LoupedeckPackage.yaml`
-- Naming convention: `PersonaKeys_1.0.0.lplug4`
-- `.lplug4` is a zip file with specific format
-
-### Marketplace Submission
-
-To submit to **Logitech Marketplace** and **Loupedeck Marketplace**:
-
-1. **Pre-submission checklist**:
-   - [ ] Tested with all supported hardware
-   - [ ] Complies with Marketplace Approval Guidelines
-   - [ ] Plugin icon included in metadata folder
-   - [ ] LoupedeckPackage.yaml configured correctly
-   - [ ] .lplug4 package passes verification
-   - [ ] All features documented
-   - [ ] Security best practices followed
-
-2. **Submit plugin**:
-   - Go to https://marketplace.logitech.com/contribute
-   - Fill out submission form
-   - Upload `.lplug4` package
-   - Provide plugin description, screenshots, documentation links
-
-3. **Installation**: Users can install by double-clicking the `.lplug4` file
-
-### Testing Guidelines
-- [ ] Action appears in device UI
-- [ ] Button press triggers action correctly
-- [ ] Loading state displays properly
-- [ ] Success feedback works (visual + haptic)
-- [ ] Error handling works correctly
-- [ ] Clipboard integration functions
-- [ ] Settings persist correctly
-- [ ] Works with multiple LLM providers
-
-### Hardware Testing
-Always test on actual hardware before submitting:
-- Logitech MX Creative Console
-- Loupedeck devices
-- Razer Stream Controller (if available)
-
-## Submitting Changes
-
-### Pull Request Process
-1. Update README.md if you add features
-2. Update CHANGELOG.md (if exists)
+1. Fork and create a feature branch: `git checkout -b feature/your-feature`
+2. Build without errors: `dotnet build`
 3. Test on actual hardware
-4. Ensure code builds without errors
-5. Submit PR with clear description
+4. Update `CHANGELOG.md` under `[Unreleased]`
+5. Update `README.md` if you add user-facing features
+6. Submit PR with this template:
 
-### PR Description Template
 ```markdown
 ## Description
-Brief description of what this PR does
+What this PR does
 
-## Type of Change
+## Type of change
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
-- [ ] Documentation update
+- [ ] Documentation
 
 ## Testing
-- [ ] Tested on hardware (specify device)
+- [ ] Tested on hardware (device model: ___)
 - [ ] Tested with Ollama
-- [ ] Tested with OpenAI/Azure/Anthropic
-- [ ] All actions still work
-
-## Screenshots
-If applicable, add screenshots or video
+- [ ] Tested with cloud provider (optional)
+- [ ] All existing actions still work
 ```
 
-## Code Review
-
-All submissions require review. We'll look for:
-- Code quality and style
-- Proper error handling
-- Documentation
-- Testing on hardware
-- Performance considerations
-
-## Feature Requests
-
-Have an idea? Open an issue with:
-- Clear description of the feature
-- Use case / problem it solves
-- Any implementation ideas
-- Examples from other tools (if applicable)
+---
 
 ## Bug Reports
 
-Found a bug? Open an issue with:
+Open an issue with:
 - Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Device model
-- Software versions
-- Logs (if available)
+- Expected vs actual behavior
+- Device model and software version
+- Relevant log output
 
-## Community
+## Feature Requests
 
-- Be respectful and constructive
-- Help others when you can
-- Share your use cases and workflows
-- Report bugs and suggest improvements
+Open an issue with:
+- Clear description and use case
+- Any implementation ideas
+- Examples from other tools if applicable
 
-## License
+---
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
-
-Thank you for contributing to PersonaKeys! 🚀
+By contributing, you agree your contributions will be licensed under the MIT License.

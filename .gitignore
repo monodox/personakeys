@@ -1,87 +1,76 @@
-# PersonaKeys .gitignore
-
-# Build results
+# Build output
 [Dd]ebug/
-[Dd]ebugPublic/
 [Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+artifacts/
+bld/
 
-# Visual Studio cache/options
+# Plugin link files (development only — not for distribution)
+*.link
+**/Plugins/*.link
+
+# Plugin packages (build output)
+*.lplug4
+
+# Visual Studio
 .vs/
-.vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+
+# VS Code (keep shared settings, ignore personal)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 # JetBrains Rider
 .idea/
 *.sln.iml
 *.DotSettings.user
 
-# .NET Core
+# .NET
 project.lock.json
 project.fragment.lock.json
-artifacts/
 **/Properties/launchSettings.json
 
-# NuGet Packages
+# NuGet
 *.nupkg
 *.snupkg
 **/packages/*
 !**/packages/build/
-*.nuget.props
-*.nuget.targets
 
-# Build Results
+# Compiled output
 *.dll
 *.exe
 *.pdb
 *.cache
 
-# Plugin link file (development)
-*.link
-
-# Logitech Plugin Service
-**/Logi/LogiPluginService/Plugins/*.link
-
-# User-specific files
-*.rsuser
-*.suo
-*.user
-*.sln.docstates
-
-# Test results
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
-
-# Environment files
+# Secrets and API keys — never commit these
 *.env
 *.env.local
 .env
-
-# API Keys and Secrets
 appsettings.Development.json
 appsettings.Local.json
 secrets.json
 *.secrets
+personakeys-settings.json
 
-# Mac
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+
+# macOS
 .DS_Store
 *.DS_Store
+__MACOSX/
 
 # Windows
 Thumbs.db
@@ -92,24 +81,15 @@ $RECYCLE.BIN/
 # Temporary files
 *.tmp
 *.temp
-*.log
 *.swp
 *.swo
 *~
-
-# Package managers
-node_modules/
-bower_components/
-
-# IDE
-*.code-workspace
-.history/
-
-# Documentation generation
-docs/_build/
-_site/
-
-# Backup files
 *.bak
 *.backup
-*~
+
+# Node (if any tooling is added)
+node_modules/
+
+# Documentation build output
+docs/_build/
+_site/

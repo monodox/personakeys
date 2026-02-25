@@ -1,79 +1,52 @@
 using System.Text.Json;
 using PersonaKeys.Models;
-using Logi.PluginCore;
 
 namespace PersonaKeys.Services;
 
 /// <summary>
-/// Manages plugin settings storage and retrieval
+/// Manages plugin settings via a local JSON file in AppData
 /// </summary>
 public class SettingsService
 {
-    private readonly BasePlugin _plugin;
-    private PluginSettings? _cachedSettings;
-    private const string SettingsKey = "PersonaKeysSettings";
+    private static readonly string SettingsPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "Logi", "LogiPluginService", "PluginData", "PersonaKeys", "personakeys-settings.json");
 
-    public SettingsService(BasePlugin plugin)
-    {
-        _plugin = plugin;
-    }
+    private PluginSettings? _cached;
 
-    /// <summary>
-    /// Gets the current plugin settings
-    /// </summary>
     public PluginSettings GetSettings()
     {
-        if (_cachedSettings != null)
-            return _cachedSettings;
+        if (_cached != null) return _cached;
 
         try
         {
-            var settingsJson = _plugin.GetPluginSetting(SettingsKey);
-            
-            if (!string.IsNullOrEmpty(settingsJson))
+            if (File.Exists(SettingsPath))
             {
-                _cachedSettings = JsonSerializer.Deserialize<PluginSettings>(settingsJson);
+                var json = File.ReadAllText(SettingsPath);
+                _cached = JsonSerializer.Deserialize<PluginSettings>(json);
             }
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed to load settings: {ex.Message}");
+            PluginLog.Error($"Failed to load settings: {ex.Message}");
         }
 
-        _cachedSettings ??= new PluginSettings();
-        return _cachedSettings;
+        _cached ??= new PluginSettings();
+        return _cached;
     }
 
-    /// <summary>
-    /// Saves plugin settings
-    /// </summary>
     public void SaveSettings(PluginSettings settings)
     {
         try
         {
-            var settingsJson = JsonSerializer.Serialize(settings, new JsonSerializerOptions 
-            { 
-                WriteIndented = true 
-            });
-            
-            _plugin.SetPluginSetting(SettingsKey, settingsJson);
-            _cachedSettings = settings;
-            
-            Log.Info("Settings saved successfully");
+            Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath)!);
+            var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(SettingsPath, json);
+            _cached = settings;
         }
         catch (Exception ex)
         {
-            Log.Error($"Failed to save settings: {ex.Message}");
-            throw;
+            PluginLog.Error($"Failed to save settings: {ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// Resets settings to default
-    /// </summary>
-    public void ResetSettings()
-    {
-        _cachedSettings = new PluginSettings();
-        SaveSettings(_cachedSettings);
     }
 }
